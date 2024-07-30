@@ -1,0 +1,67 @@
+# Ignore executable files
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore object files and intermediate files
+*.o
+*.obj
+
+# Ignore backup and temporary files
+*~
+*.bak
+*.tmp
+*.temp
+
+# Ignore Free Pascal unit files
+*.ppu
+*.a
+*.rsj
+*.s
+*.dsk
+
+# Ignore Lazarus IDE files
+*.lpi
+*.lps
+*.or
+*.compiled
+lib/
+
+# Ignore build directories
+bin/
+build/
+out/
+
+# Ignore compiled and linked output
+*.map
+*.lst
+*.map
+*.tds
+
+# Ignore generated files by IDEs or compilers
+*.res
+*.inc
+*.drc
+
+# Ignore Delphi project files
+*.dproj
+*.dpr
+*.cfg
+*.dof
+*.bdsproj
+*.groupproj
+
+# Ignore Delphi DCU files
+*.dcu
+
+# Ignore Delphi-generated resource files
+*.res
+
+# Ignore Lazarus configuration files
+environmentoptions.xml
+*.lps
+*.lpi
+*.compiled
+backup/
+lib/
