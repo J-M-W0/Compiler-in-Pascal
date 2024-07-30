@@ -12,9 +12,6 @@ const
     CR   = ^M;
     LF   = ^J;
     BELL = ^G;
-    FileNameIn = 'probe.dao';
-    FileNameTemp = 'probe.tmp';
-    FileNameOut = 'probe.asm';
 (*-----------------------------------------*)
 type
     bool   = boolean;
@@ -157,6 +154,10 @@ var
 
     ProgramName: string;
 
+    FileNameIn: string;
+    FileNameTemp: string;
+    FileNameOut: string;
+    
     LaoTzusIn:   Text;
     LaoTzusTemp: Text;
     LaoTzusOut:  Text;
@@ -2158,6 +2159,7 @@ begin
         writeln('Failed to open the file', FileNameTemp);
         exit;
     end;
+
     assign(TempWrite, FileNameOut);
     rewrite(TempWrite);
     if IOResult <> 0 then begin
@@ -2195,6 +2197,7 @@ begin
     assign(LaoTzusTemp, FileNameTemp);
     append(LaoTzusTemp);
     
+    RenameFile(FileNameTemp, FileNameOut)
 end;
 (*-----------------------------------------*)
 function isglobaldecl(t: TokenTypes): bool;
@@ -2863,6 +2866,21 @@ begin
 
     LineNr      := 1;
     ColumnNr    := 0;
+
+    if ParamCount <> 1 then begin
+        writeln('Usage: ', ParamStr(0), '<filename>');
+        halt(1);
+    end;
+
+    FileNameIn := ParamStr(1);
+    if LowerCase(ExtractFileExt(FileNameIn)) ='.dao' then begin
+        FileNameTemp := ChangeFileExt(FileNameIn, '.tmp');
+        FileNameOut := ChangeFileExt(FileNameIn, '');
+    end
+    else begin 
+        writeln('Error: input file name should be ended with ''.dao''!');
+        halt(1);
+    end;
 
     assign(LaoTzusIn, FileNameIn);
     reset(LaoTzusIn);
