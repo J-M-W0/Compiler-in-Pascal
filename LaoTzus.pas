@@ -1702,50 +1702,50 @@ end;
 (*-----------------------------------------*)
 procedure AnalyzeAdd(locals: LocalTablePtr);
 begin
-    writeln(LaoTzusTemp, TAB, 'push r0');
+    writeln(LaoTzusTemp, TAB, 'push ax');
     analyzer;
     AnalyzeTerm(locals);
-    writeln(LaoTzusTemp, TAB, 'pop r3');
-    writeln(LaoTzusTemp, TAB, 'add r0, r3');
+    writeln(LaoTzusTemp, TAB, 'pop cx');
+    writeln(LaoTzusTemp, TAB, 'add ax, cx');
 end;
 (*-----------------------------------------*)
 procedure AnalyzeSub(locals: LocalTablePtr);
 begin
-    writeln(LaoTzusTemp, TAB, 'push r0');
+    writeln(LaoTzusTemp, TAB, 'push ax');
     analyzer;
     AnalyzeTerm(locals);
-    writeln(LaoTzusTemp, TAB, 'pop r3');
-    writeln(LaoTzusTemp, TAB, 'sub r0, r3');
-    writeln(LaoTzusTemp, TAB, 'neg r0');
+    writeln(LaoTzusTemp, TAB, 'pop cx');
+    writeln(LaoTzusTemp, TAB, 'sub ax, cx');
+    writeln(LaoTzusTemp, TAB, 'neg ax');
 end;
 (*-----------------------------------------*)
 procedure AnalyzeMul(locals: LocalTablePtr);
 begin
-    writeln(LaoTzusTemp, TAB, 'push r0');
+    writeln(LaoTzusTemp, TAB, 'push ax');
     analyzer;
     AnalyzeFactor(locals);
-    writeln(LaoTzusTemp, TAB, 'pop r3');
-    writeln(LaoTzusTemp, TAB, 'mul r0, r3');
+    writeln(LaoTzusTemp, TAB, 'pop cx');
+    writeln(LaoTzusTemp, TAB, 'mul ax, cx');
 end;
 (*-----------------------------------------*)
 procedure AnalyzeDiv(locals: LocalTablePtr);
 begin
-    writeln(LaoTzusTemp, TAB, 'push r0');
+    writeln(LaoTzusTemp, TAB, 'push ax');
     analyzer;
     AnalyzeFactor(locals);
-    writeln(LaoTzusTemp, TAB, 'pop r3');
-    writeln(LaoTzusTemp, TAB, 'div r3, r0');
-    writeln(LaoTzusTemp, TAB, 'mov r0, r3');
+    writeln(LaoTzusTemp, TAB, 'pop cx');
+    writeln(LaoTzusTemp, TAB, 'div cx, ax');
+    writeln(LaoTzusTemp, TAB, 'mov ax, cx');
 end;
 (*-----------------------------------------*)
 procedure AnalyzeMod(locals: LocalTablePtr);
 begin
-    writeln(LaoTzusTemp, TAB, 'push r0');
+    writeln(LaoTzusTemp, TAB, 'push ax');
     analyzer;
     AnalyzeFactor(locals);
-    writeln(LaoTzusTemp, TAB, 'pop r3');
-    writeln(LaoTzusTemp, TAB, 'mod r3, r0');
-    writeln(LaoTzusTemp, TAB, 'mov r0, r3');
+    writeln(LaoTzusTemp, TAB, 'pop cx');
+    writeln(LaoTzusTemp, TAB, 'mod cx, ax');
+    writeln(LaoTzusTemp, TAB, 'mov ax, cx');
 end;
 (*-----------------------------------------*)
 procedure AnalyzeExpression(locals: LocalTablePtr);
@@ -1791,7 +1791,7 @@ begin
     end
     else if Token = TokenInteger then 
     begin
-        writeln(LaoTzusTemp, TAB, 'mov r0, ', TokenValue);
+        writeln(LaoTzusTemp, TAB, 'mov ax, ', TokenValue);
         analyzer;
     end
     else if Token = TokenPlus then 
@@ -1803,7 +1803,7 @@ begin
     begin
         analyzer;
         AnalyzeFactor(locals);
-        writeln(LaoTzusTemp, TAB, 'neg r0');
+        writeln(LaoTzusTemp, TAB, 'neg ax');
     end
     else if Token = TokenAddrAt then
     begin
@@ -1813,21 +1813,21 @@ begin
         begin
             BP := locals^.retrieve_bp(TokenValue);
             if BP < 0 then 
-                writeln(LaoTzusTemp, TAB, 'lea r0, [bp - ', -BP, ']')
+                writeln(LaoTzusTemp, TAB, 'lea ax, [bp - ', -BP, ']')
             else if BP > 0 then
-                writeln(LaoTzusTemp, TAB, 'lea r0, [bp + ', BP, ']')
+                writeln(LaoTzusTemp, TAB, 'lea ax, [bp + ', BP, ']')
             else
-                writeln(LaoTzusTemp, TAB, 'lea r0, [bp]');
+                writeln(LaoTzusTemp, TAB, 'lea ax, [bp]');
             analyzer;
         end
         else if variables.have(TokenValue) then 
         begin
-            writeln(LaoTzusTemp, TAB, 'lea r0, [', TokenValue, ']');
+            writeln(LaoTzusTemp, TAB, 'lea ax, [', TokenValue, ']');
             analyzer;
         end
         else if routines.have_routine(TokenValue) then 
         begin
-            writeln(LaoTzusTemp, TAB, 'lea r0, [', TokenValue, ']');
+            writeln(LaoTzusTemp, TAB, 'lea ax, [', TokenValue, ']');
             analyzer;
         end
         else 
@@ -1843,11 +1843,11 @@ begin
             else 
                 SizeDirective := 'byte';
             if BP < 0 then 
-                writeln(LaoTzusTemp, TAB, 'mov r0, ', SizeDirective, ' [bp - ', -BP, ']')
+                writeln(LaoTzusTemp, TAB, 'mov ax, ', SizeDirective, ' [bp - ', -BP, ']')
             else if BP > 0 then
-                writeln(LaoTzusTemp, TAB, 'mov r0, ', SizeDirective, ' [bp + ', BP, ']')
+                writeln(LaoTzusTemp, TAB, 'mov ax, ', SizeDirective, ' [bp + ', BP, ']')
             else
-                writeln(LaoTzusTemp, TAB, 'mov r0, ', SizeDirective, ' [bp]');
+                writeln(LaoTzusTemp, TAB, 'mov ax, ', SizeDirective, ' [bp]');
             analyzer;
         end
         else if variables.have(TokenValue) then 
@@ -1857,7 +1857,7 @@ begin
                 SizeDirective := 'word'
             else
                 SizeDirective := 'byte';
-            writeln(LaoTzusTemp, TAB, 'mov r0, ', SizeDirective, ' [', TokenValue, ']');
+            writeln(LaoTzusTemp, TAB, 'mov ax, ', SizeDirective, ' [', TokenValue, ']');
             analyzer;
         end
         else if routines.have_routine(TokenValue) then 
@@ -1883,12 +1883,12 @@ begin
     analyzer;
     if Token = TokenRParenth then exit;
     AnalyzeExpression(locals);
-    writeln(LaoTzusTemp, TAB, 'push r0');
+    writeln(LaoTzusTemp, TAB, 'push ax');
     inc(NParam);
     while Token = TokenComma do begin
         analyzer;
         AnalyzeExpression(locals);
-        writeln(LaoTzusTemp, TAB, 'push r0');
+        writeln(LaoTzusTemp, TAB, 'push ax');
         inc(NParam);
     end;
 end;
@@ -1910,13 +1910,13 @@ begin
     begin
         BP := locals^.retrieve_bp(RoutineName);
         if BP < 0 then
-            writeln(LaoTzusTemp, TAB, 'lea r0, [bp - ', -BP, ']')
+            writeln(LaoTzusTemp, TAB, 'lea ax, [bp - ', -BP, ']')
         else if BP > 0 then
-            writeln(LaoTzusTemp, TAB, 'lea r0, [bp + ', BP, ']')
+            writeln(LaoTzusTemp, TAB, 'lea ax, [bp + ', BP, ']')
         else begin
-            writeln(LaoTzusTemp, TAB, 'lea r0, [bp]');
+            writeln(LaoTzusTemp, TAB, 'lea ax, [bp]');
         end;
-        writeln(LaoTzusTemp, TAB, 'push r0');
+        writeln(LaoTzusTemp, TAB, 'push ax');
         inc(NParam);
     end;
 
@@ -1968,11 +1968,11 @@ begin
         else 
             SizeDirective := 'byte';
         if SP < 0 then 
-            writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp - ', -SP, '], r0')
+            writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp - ', -SP, '], ax')
         else if SP > 0 then 
-            writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp + ', SP, '], r0')
+            writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp + ', SP, '], ax')
         else 
-            writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp], r0');
+            writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp], ax');
     end
     else if variables.have(LeftValue) then 
     begin
@@ -1982,7 +1982,7 @@ begin
             SizeDirective := 'word'
         else
             SizeDirective := 'byte';
-        writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [', LeftValue, '], r0');
+        writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [', LeftValue, '], ax');
     end;
 end;
 (*-----------------------------------------*)
@@ -2006,10 +2006,10 @@ begin
         else if routines.is_function(RoutineName) then 
         begin
             AnalyzeExpression(locals);
-            writeln(LaoTzusTemp, TAB, 'push r0');
-            writeln(LaoTzusTemp, TAB, 'lea r0, [bp + ', routines.get_topBP(RoutineName) - 2, ']');
-            writeln(LaoTzusTemp, TAB, 'pop r3');
-            writeln(LaoTzusTemp, TAB, 'mov word [r0], r3');
+            writeln(LaoTzusTemp, TAB, 'push ax');
+            writeln(LaoTzusTemp, TAB, 'lea ax, [bp + ', routines.get_topBP(RoutineName) - 2, ']');
+            writeln(LaoTzusTemp, TAB, 'pop cx');
+            writeln(LaoTzusTemp, TAB, 'mov word [ax], cx');
             writeln(LaoTzusTemp, TAB, 'jmp .exit');
         end
         else 
@@ -2148,7 +2148,6 @@ begin
     writeln(LaoTzusTemp, '.exit:');
     writeln(LaoTzusTemp, TAB, 'mov sp, bp');
     writeln(LaoTzusTemp, TAB, 'pop bp');
-    writeln(LaoTzusTemp, TAB, 'END');
 
     close(LaoTzusTemp);
 
@@ -2344,7 +2343,7 @@ begin
 
     analyzer;
     AnalyzeExpression(locals);
-    writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp - ', -BP, '], r0');
+    writeln(LaoTzusTemp, TAB, 'mov ', SizeDirective, ' [bp - ', -BP, '], ax');
 
 end;
 (*-----------------------------------------*)
@@ -2732,7 +2731,7 @@ begin
     analyzer;
 
     writeln(LaoTzusTemp, '.exit');
-    writeln(LaoTzusTemp, TAB, 'lea r0, [bp + ', routines.retrieve_topBP - 2, ']');
+    writeln(LaoTzusTemp, TAB, 'lea ax, [bp + ', routines.retrieve_topBP - 2, ']');
     writeln(LaoTzusTemp, TAB, 'mov sp, bp');
     writeln(LaoTzusTemp, TAB, 'pop bp');
     writeln(LaoTzusTemp, TAB, 'ret');
@@ -2875,7 +2874,7 @@ begin
     FileNameIn := ParamStr(1);
     if LowerCase(ExtractFileExt(FileNameIn)) ='.dao' then begin
         FileNameTemp := ChangeFileExt(FileNameIn, '.tmp');
-        FileNameOut := ChangeFileExt(FileNameIn, '');
+        FileNameOut := ChangeFileExt(FileNameIn, '.asm');
     end
     else begin 
         writeln('Error: input file name should be ended with ''.dao''!');
